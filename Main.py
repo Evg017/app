@@ -1,16 +1,17 @@
 # Простое приложение "крестики-нолики"
 # kivy версии 2.0.0
 
-from kivy.app import App
-from kivy.uix.label import Label
-from kivy.uix.gridlayout import GridLayout
-from kivy.uix.button import Button
-from kivy.properties import ListProperty, NumericProperty
-from kivy.uix.modalview import ModalView
+from kivy.app import App # Rласс является базой для создания приложений Kivy
+from kivy.uix.label import Label # Виджет предназначен для рендеринга текста.
+from kivy.uix.gridlayout import GridLayout # Для создания ячеек
+from kivy.uix.button import Button # Обрабатывает действия, которые срабатывают при нажатии кнопок
+from kivy.properties import ListProperty, NumericProperty # Отслеживаемая глубина и для проверки, что значение является числовым типом.
+from kivy.uix.modalview import ModalView # Виджет используется для создания модальных представлений
 
+# Класс кнопок
 class GridEntry(Button):
     coords = ListProperty([0, 0])
-    
+
 class MainGrid(GridLayout):
     status = ListProperty([0, 0, 0, 0, 0, 0, 0, 0, 0]) 
     current_player = NumericProperty(1) # Если 1, то начинает игрок "O", если -1, то "X"
@@ -24,23 +25,19 @@ class MainGrid(GridLayout):
                 grid_entry.bind(on_release=self.button_pressed)
                 self.add_widget(grid_entry)
         
-
     def button_pressed(self, button):
-        # print ('{} button clicked!'.format(button.coords))
         # Создание игроков и присваивание им цвета
-        player = {1: 'O', -1: 'X'}
         colours = {
                     1: (1, 1, 0, 1), # Цвет "O" игрока
                     -1: (0, 1, 1, 1) # Цвет "X" игрока
-                    } # Цвет в r, g, b, a
-
+                    }                # Цвет в r, g, b, a
         row, column = button.coords # Нажатая кнопка автоматически передается в качестве аргумента
 
         # Преобразование координат 2D сетки в 1D индекс состояния
         status_index = 3*row + column
         already_played = self.status[status_index]
 
-        # If nobody has played here yet, make a new move
+        # Начало первого хода и смена игрока
         if not already_played:
             self.status[status_index] = self.current_player
             button.text = {1: 'O', -1: 'X'}[self.current_player]
